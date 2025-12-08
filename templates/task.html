@@ -1,189 +1,60 @@
 {% extends "sidebar.html" %}
-
 {% block content %}
-    <style>
-        *{box-sizing:border-box;margin:0;padding:0}
-        body{font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Arial, sans-serif;background:#f8f9fa}
-        .wrapper{display:flex;min-height:100vh}
 
+<h2>Create Task</h2>
+<form method="POST">
+    <label>Title</label>
+    <input type="text" name="title" required><br><br>
 
-        .main-content{flex:1;padding:30px}
-        .page-header{display:flex;justify-content:space-between;align-items:center;margin-bottom:24px}
-        .page-title{font-size:22px;font-weight:700;color:#18202c}
-        .filters{display:flex;gap:10px;align-items:center}
-        .chip{padding:8px 12px;border-radius:999px;background:#f0f4ff;color:#334;cursor:pointer;border:1px solid transparent}
-        .chip.active{background:#4f6ef2;color:#fff}
+    <label>Description</label>
+    <textarea name="description"></textarea><br><br>
 
-        .tasks-card{background:#fff;padding:20px;border-radius:12px;box-shadow:0 2px 12px rgba(16,24,40,0.06)}
-        .task-row{display:flex;align-items:flex-start;gap:16px;padding:18px;border-radius:10px;border:1px solid #f0f4f8;margin-bottom:16px}
-        .task-row:last-child{margin-bottom:0}
+    <label>Due Date</label>
+    <input type="date" name="due_date"><br><br>
 
+    <label>Priority</label>
+    <select name="priority">
+        <option value="high">High</option>
+        <option value="medium" selected>Medium</option>
+        <option value="low">Low</option>
+    </select><br><br>
 
-        .task-row[data-detail]{
-            cursor: pointer;
-            transition: background 120ms ease;
-        }
-        .task-row[data-detail]:hover{
-            background: #fbfdff;
-        }
-        .task-checkbox{width:20px;height:20px;border-radius:6px;border:1px solid #dfe7ef;flex-shrink:0}
-        .task-content{flex:1}
-        .task-title{font-weight:600;color:#0f1724;margin-bottom:6px}
-        .task-desc{color:#6b7280;font-size:13px;margin-bottom:10px}
-        .task-meta{display:flex;gap:12px;color:#9aa3ad;font-size:13px;align-items:center}
-        .task-meta .meta-item{display:flex;gap:6px;align-items:center}
+    <label>Assign To</label>
+    <select name="assigned_to">
+        <option value="">Self</option>
+        {% for user in users %}
+        <option value="{{ user.id }}">{{ user.name }}</option>
+        {% endfor %}
+    </select><br><br>
 
-        .priority{padding:6px 10px;border-radius:999px;font-weight:700;font-size:12px}
-        .priority.high{background:#fff5f5;color:#c62828}
-        .priority.medium{background:#fff8e6;color:#ff9800}
-        .priority.low{background:#effaf1;color:#2e7d32}
+    <button type="submit">Create Task</button>
+</form>
 
-        .avatars{display:flex;gap:6px}
-        .avatar{width:28px;height:28px;border-radius:50%;display:inline-flex;align-items:center;justify-content:center;color:#fff;font-size:12px}
-        .progress-wrap{width:110px;height:10px;background:#eef2fb;border-radius:999px;overflow:hidden}
-        .progress-fill{height:100%;border-radius:999px}
-
-
-        .search-notification{display:flex;gap:16px;align-items:center}
-        .search-box{padding:10px 14px;border-radius:8px;border:1px solid #e6eef6;width:320px}
-
-        @media (max-width:900px){.search-box{width:180px}}
-    </style>
-</head>
-<body>
-    <div class="wrapper">
-        <!-- sidebar placeholder -->
-        <div id="sidebar-container"></div>
-
-        <!-- main area -->
-        <main class="main-content">
-            <div class="page-header">
-                <div>
-                    <div class="page-title">Tasks</div>
-                    <div style="margin-top:8px;color:#6b7280;font-size:13px">All tasks and filters</div>
-                </div>
-                <div class="search-notification">
-                    <input class="search-box" placeholder="Search tasks..." />
-                </div>
+<div class="tasks-card">
+    {% for task in tasks %}
+    <div class="task-row" data-detail="{{ url_for('task_bp.task_detail', task_id=task.id) }}">
+        <div><input type="checkbox" class="task-checkbox" {% if task.status=='completed' %}checked{% endif %} /></div>
+        <div class="task-content">
+            <div class="task-title">{{ task.title }}</div>
+            <div class="task-desc">{{ task.description }}</div>
+            <div class="task-meta">
+                <div class="meta-item">📅 Due {{ task.due_date }}</div>
+                <div class="meta-item">👤 Assigned to {{ task.assigned_name or 'You' }}</div>
             </div>
-
-            <div style="display:flex;gap:12px;margin-bottom:18px;align-items:center">
-                <div class="chip active">All</div>
-                <div class="chip">Personal</div>
-                <div class="chip">Group</div>
-            </div>
-
-            <div class="tasks-card">
-                <!-- task 1 -->
-                <div class="task-row" data-detail="mobileAppWireframes.html">
-                    <div><input type="checkbox" class="task-checkbox" /></div>
-                    <div class="task-content">
-                        <div class="task-title" href="/task1">Mobile app wireframes</div>
-                        <div class="task-desc">Create wireframes for the new mobile application</div>
-                        <div class="task-meta">
-                            <div class="meta-item">📅 Due Dec 25</div>
-                            <div class="meta-item">👤 Assigned to you</div>
-                        </div>
-                    </div>
-                    <div style="display:flex;flex-direction:column;align-items:flex-end;gap:10px">
-                        <div class="priority high">High</div>
-                        <div style="display:flex;align-items:center;gap:8px">
-                            <div class="avatars">
-                                <div class="avatar" style="background:#667eea">A</div>
-                                <div class="avatar" style="background:#764ba2">M</div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-
-                <!-- task 2 -->
-                <div class="task-row">
-                    <div><input type="checkbox" class="task-checkbox" /></div>
-                    <div class="task-content">
-                        <div class="task-title">Database optimization</div>
-                        <div class="task-desc">Optimize database queries for better performance</div>
-                        <div class="task-meta">
-                            <div class="meta-item">📅 Due Dec 28</div>
-                            <div class="meta-item">👥 Team task</div>
-                        </div>
-                    </div>
-                    <div style="display:flex;flex-direction:column;align-items:flex-end;gap:10px">
-                        <div class="priority medium">Medium</div>
-                        <div style="display:flex;align-items:center;gap:8px">
-                            <div class="avatars">
-                                <div class="avatar" style="background:#f59e0b">R</div>
-                                <div class="avatar" style="background:#10b981">S</div>
-                                <div class="avatar" style="background:#6366f1">T</div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </main>
+        </div>
+        <div style="display:flex;flex-direction:column;align-items:flex-end;gap:10px">
+            <div class="priority {{ task.priority }}">{{ task.priority|capitalize }}</div>
+        </div>
+        <div style="margin-left:10px;display:flex;flex-direction:column;gap:5px">
+            <a href="{{ url_for('task_bp.complete_task', task_id=task.id) }}" style="color:green;font-size:14px">✔ Complete</a>
+            {% if task.created_by == session.get('user_id') %}
+            <a href="{{ url_for('task_bp.delete_task', task_id=task.id) }}" style="color:red;font-size:14px">🗑 Delete</a>
+            {% endif %}
+        </div>
     </div>
+    {% else %}
+    <div>No tasks found.</div>
+    {% endfor %}
+</div>
 
-    <script>
-        // load sidebar like dashboard
-        (function loadSidebar(){
-            fetch('sidebar.html')
-                .then(r=>r.text())
-                .then(html=>{
-                    const doc = new DOMParser().parseFromString(html,'text/html');
-                    const style = doc.querySelector('style');
-                    if(style && !document.getElementById('sidebar-styles')){
-                        const s = document.createElement('style'); s.id='sidebar-styles'; s.textContent=style.textContent; document.head.appendChild(s);
-                    }
-                    const aside = doc.querySelector('aside.sidebar');
-                    const container = document.getElementById('sidebar-container');
-                    if (aside && container) {
-                        // remove inline onclick handlers from the loaded markup
-                        aside.querySelectorAll('[onclick]').forEach(el => el.removeAttribute('onclick'));
-
-                        // ensure the inserted aside has the expected id and insert
-                        aside.id = 'sidebar';
-                        container.innerHTML = '';
-                        container.appendChild(aside);
-
-                        // re-query the inserted sidebar and attach handlers
-                        const inserted = document.getElementById('sidebar');
-                        const logo = inserted.querySelector('.logo-container');
-                        if (logo) logo.addEventListener('click', () => { inserted.classList.toggle('collapsed'); });
-
-                        // set active nav-link based on current filename (highlight Tasks when on task.html)
-                        try {
-                            const currentFile = window.location.pathname.split('/').pop() || 'task.html';
-                            inserted.querySelectorAll('.nav-link').forEach(a => {
-                                const href = a.getAttribute('href');
-                                if (!href) return;
-                                const linkFile = href.split('/').pop();
-                                if (linkFile === currentFile) a.classList.add('active'); else a.classList.remove('active');
-                            });
-                        } catch (e) {
-                            // ignore
-                        }
-                    }
-                })
-                .catch(e=>console.error('sidebar load failed',e));
-        })();
-
-        // checkbox toggle visual
-        document.addEventListener('click', e=>{
-            if(e.target && e.target.classList && e.target.classList.contains('task-checkbox')){
-                e.target.classList.toggle('checked');
-                if(e.target.checked) e.target.style.background='#667eea'; else e.target.style.background='';
-            }
-        });
-    </script>
-    <script>
-        // double-click first task to open detail page (mobileAppWireframes.html)
-        document.addEventListener('dblclick', function (e) {
-            const row = e.target.closest && e.target.closest('.task-row');
-            if (!row) return;
-            const target = row.getAttribute('data-detail');
-            if (target) {
-                window.location.href = target;
-            }
-        });
-    </script>
-</body>
 {% endblock %}

@@ -1,35 +1,38 @@
-from flask import Flask, render_template
+from flask import Flask, redirect, url_for
+from database_connector import get_db_connection
+
+# Import all route blueprints
+from routes.index_route import index_bp
+from routes.auth_route import auth_bp        # Updated to match auth_route
+from routes.dashboard_route import dashboard_bp
+from routes.profile_route import profile_bp
+from routes.task_route import task_bp
+from routes.sidebar_route import sidebar_bp
+from routes.notification_route import notification_bp
+from routes.group_routes import group_bp
 
 app = Flask(__name__)
+app.secret_key = "supersecretkey"  # Needed for session management
 
 # -----------------------------
-# ROUTES
+# REGISTER ROUTES
 # -----------------------------
+app.register_blueprint(notification_bp)
+app.register_blueprint(index_bp)
+app.register_blueprint(auth_bp)
+app.register_blueprint(dashboard_bp)
+app.register_blueprint(profile_bp)
+app.register_blueprint(task_bp)
+app.register_blueprint(sidebar_bp)
+app.register_blueprint(group_bp)
 
+# -----------------------------
+# REDIRECT ROOT TO INDEX
+# -----------------------------
 @app.route("/")
-def index():
-    return render_template("index.html")
-
-@app.route("/login")
-def login():
-    return render_template("login.html")
-
-@app.route("/dashboard")
-def dashboard():
-    return render_template("dashboard.html")
-
-@app.route("/profile")
-def profile():
-    return render_template("profile.html")
-
-@app.route("/task")
-def task():
-    return render_template("task.html")
-
-@app.route("/sidebar")
-def sidebar():
-    return render_template("sidebar.html")
-
+def home():
+    # Redirect to the index blueprint
+    return redirect(url_for("index_bp.index"))
 
 # -----------------------------
 # MAIN

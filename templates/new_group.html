@@ -1,0 +1,9 @@
+{% extends "sidebar.html" %}
+{% block content %}
+<h2>Create New Group</h2>
+<form method="POST">
+    <label>Group Name</label>
+    <input type="text" name="name" required>
+    <button type="submit">Create</button>
+</form>
+{% endblock %}

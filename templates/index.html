@@ -95,6 +95,11 @@
             transform: scale(1.02);
             box-shadow: 0 10px 25px rgba(0, 0, 0, 0.2);
         }
+
+        #image{
+            width: 200px;
+            border-radius: 10%;
+        }
     </style>
 </head>
 <body>
@@ -102,17 +107,18 @@
     <div class="container">
         
         <div class="image-box">
-            <div class="placeholder">[Image Placeholder]</div>
+            <div class="placeholder"><img id="image" src="static/logo.png" alt="image"></div>
         </div>
         
         <h1>Welcome to Chativity</h1>
         <p class="subtitle">Organize smarter. Communicate faster.</p>
-        
+    <!--
         <div class="dots">
             <div class="dot"></div>
             <div class="dot inactive"></div>
             <div class="dot inactive"></div>
         </div>
+    -->
         
         <a href="/login" class="continue-btn" style="display: block; text-decoration: none;">Continue</a>
         

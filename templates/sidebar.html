@@ -7,188 +7,32 @@
 
     <style>
         /* --- Your entire sidebar style copied here unchanged --- */
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
-
-        .sidebar {
-            width: 240px;
-            background: white;
-            padding: 20px;
-            box-shadow: 2px 0 8px rgba(0, 0, 0, 0.05);
-            position: fixed;
-            transition: width 0.3s ease;
-            height: 100vh;
-            overflow-y: auto;
-        }
-
-        .sidebar.collapsed {
-            width: 80px;
-        }
-
-        .logo-container {
-            display: flex;
-            align-items: center;
-            gap: 12px;
-            margin-bottom: 30px;
-            cursor: pointer;
-        }
-
-        .logo-box {
-            width: 40px;
-            height: 40px;
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            border-radius: 8px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            color: white;
-            font-weight: bold;
-            font-size: 20px;
-        }
-
-        .logo-text {
-            font-size: 18px;
-            font-weight: 600;
-            color: #1a1a1a;
-            transition: opacity 0.3s ease;
-        }
-
-        .sidebar.collapsed .logo-text {
-            display: none;
-        }
-
-        .nav-menu {
-            list-style: none;
-        }
-
-        .nav-item {
-            margin-bottom: 15px;
-        }
-
-        .nav-link {
-            display: flex;
-            align-items: center;
-            gap: 12px;
-            padding: 12px;
-            color: #666;
-            text-decoration: none;
-            border-radius: 8px;
-            transition: background 0.2s, color 0.2s;
-        }
-
-        .nav-link:hover,
-        .nav-link.active {
-            background: #f0f0f0;
-            color: #667eea;
-        }
-
-        .nav-icon {
-            width: 24px;
-            height: 24px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 18px;
-        }
-
-        .nav-text {
-            transition: opacity 0.3s ease;
-        }
-
-        .sidebar.collapsed .nav-text {
-            display: none;
-        }
-
-        .user-profile {
-            position: absolute;
-            bottom: 20px;
-            width: calc(100% - 40px);
-            padding: 12px;
-            border-top: 1px solid #eee;
-            padding-top: 12px;
-        }
-
-        .sidebar.collapsed .user-profile {
-            width: calc(100% - 20px);
-        }
-
-        .user-info {
-            display: flex;
-            align-items: center;
-            gap: 12px;
-        }
-
-        .user-avatar {
-            width: 40px;
-            height: 40px;
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            border-radius: 50%;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            color: white;
-            font-weight: bold;
-        }
-
-        .user-details {
-            transition: opacity 0.3s ease;
-        }
-
-        .sidebar.collapsed .user-details {
-            display: none;
-        }
-
-        .user-name {
-            font-size: 14px;
-            font-weight: 600;
-            color: #1a1a1a;
-        }
-
-        .user-role {
-            font-size: 12px;
-            color: #999;
-        }
-
-        .notification-badge {
-            margin-left: auto;
-            position: relative;
-            width: 20px;
-            height: 20px;
-            background: #f44336;
-            color: white;
-            border-radius: 50%;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 12px;
-            font-weight: bold;
-        }
-
-        .sidebar.collapsed .notification-badge {
-            width: 10px;
-            height: 10px;
-            font-size: 0;
-            padding: 0;
-            margin-left: 0;
-            align-self: center;
-        }
-
-        /* --- NEW: right content area --- */
-        .main-content {
-            margin-left: 240px;
-            padding: 30px;
-            width: calc(100% - 240px);
-            min-height: 100vh;
-            transition: margin-left 0.3s ease, width 0.3s ease;
-        }
-
-        .collapsed + .main-content {
-            margin-left: 80px;
-            width: calc(100% - 80px);
-        }
+        * {margin: 0; padding: 0; box-sizing: border-box;}
+        .sidebar {width: 240px; background: white; padding: 20px; box-shadow: 2px 0 8px rgba(0,0,0,0.05); position: fixed; transition: width 0.3s ease; height: 100vh; overflow-y: auto;}
+        .sidebar.collapsed {width: 80px;}
+        .logo-container {display: flex; align-items: center; gap: 12px; margin-bottom: 30px; cursor: pointer;}
+        .logo-box {width: 40px; height: 40px; background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); border-radius: 8px; display: flex; align-items: center; justify-content: center; color: white; font-weight: bold; font-size: 20px;}
+        .logo-text {font-size: 18px; font-weight: 600; color: #1a1a1a; transition: opacity 0.3s ease;}
+        .sidebar.collapsed .logo-text {display: none;}
+        .nav-menu {list-style: none;}
+        .nav-item {margin-bottom: 15px;}
+        .nav-link {display: flex; align-items: center; gap: 12px; padding: 12px; color: #666; text-decoration: none; border-radius: 8px; transition: background 0.2s, color 0.2s;}
+        .nav-link:hover, .nav-link.active {background: #f0f0f0; color: #667eea;}
+        .nav-icon {width: 24px; height: 24px; display: flex; align-items: center; justify-content: center; font-size: 18px;}
+        .nav-text {transition: opacity 0.3s ease;}
+        .sidebar.collapsed .nav-text {display: none;}
+        .user-profile {position: absolute; bottom: 20px; width: calc(100% - 40px); padding: 12px; border-top: 1px solid #eee;}
+        .sidebar.collapsed .user-profile {width: calc(100% - 20px);}
+        .user-info {display: flex; align-items: center; gap: 12px;}
+        .user-avatar {width: 40px; height: 40px; background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); border-radius: 50%; display: flex; align-items: center; justify-content: center; color: white; font-weight: bold;}
+        .user-details {transition: opacity 0.3s ease;}
+        .sidebar.collapsed .user-details {display: none;}
+        .user-name {font-size: 14px; font-weight: 600; color: #1a1a1a;}
+        .user-role {font-size: 12px; color: #999;}
+        .notification-badge {margin-left: auto; position: relative; width: 20px; height: 20px; background: #f44336; color: white; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 12px; font-weight: bold;}
+        .sidebar.collapsed .notification-badge {width: 10px; height: 10px; font-size: 0; padding: 0; margin-left: 0; align-self: center;}
+        .main-content {margin-left: 240px; padding: 30px; width: calc(100% - 240px); min-height: 100vh; transition: margin-left 0.3s ease, width 0.3s ease;}
+        .collapsed + .main-content {margin-left: 80px; width: calc(100% - 80px);}
     </style>
 </head>
 
@@ -203,19 +47,42 @@
 
         <nav>
             <ul class="nav-menu">
-                <li class="nav-item"><a href="/dashboard" class="nav-link"><span class="nav-icon">🏠</span><span class="nav-text">Dashboard</span></a></li>
-                <li class="nav-item"><a href="/task" class="nav-link"><span class="nav-icon">✓</span><span class="nav-text">Tasks</span></a></li>
-                <li class="nav-item"><a href="#" class="nav-link"><span class="nav-icon">👥</span><span class="nav-text">Groups</span></a></li>
-                <li class="nav-item"><a href="#" class="nav-link"><span class="nav-icon">🔔</span><span class="nav-text">Notifications</span><span class="notification-badge">3</span></a></li>
+                <li class="nav-item">
+                    <a href="{{ url_for('dashboard_bp.dashboard') }}" class="nav-link {% if request.path == '/dashboard' %}active{% endif %}">
+                        <span class="nav-icon">🏠</span>
+                        <span class="nav-text">Dashboard</span>
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a href="{{ url_for('task_bp.task_list') }}" class="nav-link {% if request.path.startswith('/task') %}active{% endif %}">
+                        <span class="nav-icon">✓</span>
+                        <span class="nav-text">Tasks</span>
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a href="{{ url_for('group_bp.groups_list') }}" class="nav-link">
+                        <span class="nav-icon">👥</span>
+                        <span class="nav-text">Groups</span>
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a href="{{ url_for('notification_bp.notifications') }}" class="nav-link">
+                        <span class="nav-icon">🔔</span>
+                        <span class="nav-text">Notifications</span>
+                        {% if session.get('unread_notifications', 0) > 0 %}
+                            <span class="notification-badge">{{ session.get('unread_notifications') }}</span>
+                        {% endif %}
+                    </a>
+                </li>
             </ul>
         </nav>
 
-        <a href="/profile" class="user-profile">
+        <a href="{{ url_for('profile_bp.profile') }}" class="user-profile">
             <div class="user-info">
-                <div class="user-avatar">K</div>
+                <div class="user-avatar">{{ session.get('user_name', 'U')[0]|upper }}</div>
                 <div class="user-details">
-                    <div class="user-name">Kim Cortez</div>
-                    <div class="user-role">Admin</div>
+                    <div class="user-name">{{ session.get('user_name', 'User') }}</div>
+                    <div class="user-role">{{ session.get('user_role', 'User') }}</div>
                 </div>
             </div>
         </a>
