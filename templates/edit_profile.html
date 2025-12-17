@@ -1,0 +1,43 @@
+{% extends "sidebar.html" %}
+{% block content %}
+<div style="max-width:600px;margin:auto;background:#fff;padding:20px;border-radius:12px;box-shadow:0 2px 12px rgba(0,0,0,0.05)">
+    <h2>Edit Profile</h2>
+
+    {% if message %}
+    <p style="color:green;">{{ message }}</p>
+    {% endif %}
+
+    <form action="{{ url_for('profile_bp.edit_profile') }}" method="POST" enctype="multipart/form-data">
+        <!-- Existing inputs -->
+        <label>Full Name</label>
+        <input type="text" name="name" value="{{ user.name }}" required>
+
+        <label>Organization / School / Company</label>
+        <input type="text" name="organization" value="{{ user.organization or '' }}">
+
+        <label>Position</label>
+        <input type="text" name="position" value="{{ user.position or '' }}">
+
+        <label>Bio</label>
+        <textarea name="bio">{{ user.bio or '' }}</textarea>
+
+        <label>Age</label>
+        <input type="number" name="age" value="{{ user.age or '' }}">
+
+        <label>Year (if school)</label>
+        <input type="text" name="year" value="{{ user.year or '' }}">
+
+        <!-- Profile Picture -->
+        <label>Profile Picture</label>
+        {% if user.profile_pic %}
+            <div>
+                <img src="{{ url_for('static', filename='uploads/profile_pics/' ~ user.profile_pic) }}" alt="Profile Picture" style="width:80px;height:80px;border-radius:50%;">
+            </div>
+        {% endif %}
+        <input type="file" name="profile_pic" accept="image/*">
+
+        <button type="submit">Save Changes</button>
+    </form>
+
+</div>
+{% endblock %}

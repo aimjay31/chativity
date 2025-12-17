@@ -1,106 +1,82 @@
 {% extends "sidebar.html" %}
-
 {% block content %}
+
+<div style="max-width:800px;margin:auto;padding:20px">
     <style>
         *{box-sizing:border-box;margin:0;padding:0}
         body{font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Arial, sans-serif;background:#f4f6f8;color:#0f1724}
-        .wrapper{display:flex;min-height:100vh}
-        .main{flex:1;padding:28px}
-
         .profile-header{background:linear-gradient(135deg,#667eea 0%,#764ba2 100%);border-radius:12px;color:#fff;padding:36px 24px;margin-bottom:20px;text-align:center}
         .profile-avatar{width:88px;height:88px;border-radius:50%;margin:0 auto;display:flex;align-items:center;justify-content:center;background:#fff;color:#667eea;font-weight:700;font-size:28px;box-shadow:0 6px 18px rgba(16,24,40,0.12);border:6px solid rgba(255,255,255,0.12)}
         .profile-name{font-size:20px;font-weight:700;margin-top:12px}
         .profile-role{font-size:13px;color:rgba(255,255,255,0.9);margin-top:6px}
-
         .stats{display:flex;gap:16px;margin-top:20px}
         .stat{flex:1;background:#fff;border-radius:10px;padding:18px;box-shadow:0 6px 18px rgba(16,24,40,0.06);text-align:center}
         .stat .big{font-size:20px;font-weight:800;color:#111}
         .stat .label{color:#6b7280;font-size:13px;margin-top:8px}
-
         .card{background:#fff;border-radius:12px;padding:18px;box-shadow:0 6px 18px rgba(16,24,40,0.06);margin-bottom:18px}
-        .settings-list{list-style:none}
+        .card h3{margin-bottom:12px}
+        .card p{margin-bottom:6px;color:#111}
+        .settings-list{list-style:none;padding:0;margin:0}
         .settings-list li{display:flex;align-items:center;justify-content:space-between;padding:12px 8px;border-bottom:1px solid #f1f5f9}
         .settings-list li .left{display:flex;align-items:center;gap:12px}
         .settings-list li:last-child{border-bottom:0}
-
         .signout{margin-top:18px;background:#fff5f5;border-radius:10px;padding:12px 18px;text-align:center;color:#c62828}
         .signout a{color:#c62828;text-decoration:none;font-weight:700}
-
         @media (max-width:900px){.stats{flex-direction:column}}
     </style>
-</head>
-<body>
-    <div class="wrapper">
-        <div id="sidebar-container"></div>
-        <main class="main">
-            <div class="profile-header">
-                <div class="profile-avatar">K</div>
-                <div class="profile-name">Kim Cortez</div>
-                <div class="profile-role">Admin</div>
 
-                <div class="stats">
-                    <div class="stat">
-                        <div class="big">47</div>
-                        <div class="label">Tasks Completed</div>
-                    </div>
-                    <div class="stat">
-                        <div class="big">92%</div>
-                        <div class="label">Success Rate</div>
-                    </div>
-                </div>
+    <!-- PROFILE HEADER -->
+    <div class="profile-header">
+        {% if user.profile_pic %}
+            <img src="{{ url_for('static', filename='uploads/profile_pics/' ~ user.profile_pic) }}" 
+                alt="Profile Picture" class="profile-avatar" style="width:88px;height:88px;border-radius:50%;">
+        {% else %}
+            <div class="profile-avatar">{{ user.name[0]|upper }}</div>
+        {% endif %}
+
+        <div class="profile-name">{{ user.name }}</div>
+        <div class="profile-role">{{ user.position or user.role }}</div>
+
+        <div class="stats">
+            <div class="stat">
+                <div class="big">{{ stats.tasks_completed or 0 }}</div>
+                <div class="label">Tasks Completed</div>
             </div>
-
-            <div class="card">
-                <div style="font-weight:700;margin-bottom:12px">Account Settings</div>
-                <ul class="settings-list">
-                    <li>
-                        <div class="left"><div style="width:28px;height:28;border-radius:6px;display:flex;align-items:center;justify-content:center">👤</div><div>Edit Profile</div></div>
-                        <div>›</div>
-                    </li>
-                    <li>
-                        <div class="left"><div style="width:28px;height:28;border-radius:6px;display:flex;align-items:center;justify-content:center">🔔</div><div>Notifications</div></div>
-                        <div>›</div>
-                    </li>
-                    <li>
-                        <div class="left"><div style="width:28px;height:28;border-radius:6px;display:flex;align-items:center;justify-content:center">🔒</div><div>Privacy</div></div>
-                        <div>›</div>
-                    </li>
-                </ul>
+            <div class="stat">
+                <div class="big">{{ stats.success_rate or '0%' }}</div>
+                <div class="label">Success Rate</div>
             </div>
-
-            <div class="signout"><a href="/login">Sign Out</a></div>
-        </main>
+        </div>
     </div>
 
-    <script>
-        // load the sidebar so navigation remains consistent
-        (function loadSidebar(){
-            fetch('sidebar.html')
-                .then(r=>r.text())
-                .then(html=>{
-                    const doc = new DOMParser().parseFromString(html,'text/html');
-                    const style = doc.querySelector('style');
-                    if(style && !document.getElementById('sidebar-styles')){
-                        const s = document.createElement('style'); s.id='sidebar-styles'; s.textContent=style.textContent; document.head.appendChild(s);
-                    }
-                    const aside = doc.querySelector('aside.sidebar');
-                    const container = document.getElementById('sidebar-container');
-                    if(aside && container){
-                        aside.querySelectorAll('[onclick]').forEach(el=>el.removeAttribute('onclick'));
-                        aside.id='sidebar'; container.innerHTML=''; container.appendChild(aside);
-                        const inserted = document.getElementById('sidebar');
-                        const logo = inserted.querySelector('.logo-container'); if(logo) logo.addEventListener('click', ()=>{ inserted.classList.toggle('collapsed'); });
-                        try{
-                            const currentFile = window.location.pathname.split('/').pop() || 'profile.html';
-                            inserted.querySelectorAll('.nav-link').forEach(a=>{
-                                const href = a.getAttribute('href'); if(!href) return; const linkFile = href.split('/').pop(); if(linkFile===currentFile) a.classList.add('active'); else a.classList.remove('active');
-                            });
-                        }catch(e){}
-                    }
-                })
-                .catch(e=>console.error('sidebar load failed',e));
-        })();
-    </script>
-</body>
-{% endblock %}
 
+    <!-- FULL USER DETAILS -->
+    <div class="card">
+        <h3>Your Details</h3>
+        <p><strong>Email:</strong> {{ user.email }}</p>
+        <p><strong>Organization / School / Company:</strong> {{ user.organization or '-' }}</p>
+        <p><strong>Position:</strong> {{ user.position or '-' }}</p>
+        <p><strong>Bio:</strong> {{ user.bio or '-' }}</p>
+        <p><strong>Age:</strong> {{ user.age or '-' }}</p>
+        <p><strong>Year Started:</strong> {{ user.year or '-' }}</p>
+    </div>
+
+    <!-- ACCOUNT SETTINGS -->
+    <div class="card">
+        <div style="font-weight:700;margin-bottom:12px">Account Settings</div>
+        <ul class="settings-list">
+            <li>
+                <div class="left">👤 Edit Profile</div>
+                <div><a href="{{ url_for('profile_bp.edit_profile') }}">›</a></div>
+            </li>
+            <li>
+                <div class="left">🔒 Privacy</div>
+                <div><a href="{{ url_for('profile_bp.privacy') }}">›</a></div>
+            </li>
+        </ul>
+    </div>
+
+    <div class="signout"><a href="{{ url_for('auth_bp.logout') }}">Sign Out</a></div>
+</div>
+
+{% endblock %}

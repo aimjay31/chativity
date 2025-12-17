@@ -1,0 +1,44 @@
+{% extends "sidebar.html" %}
+{% block content %}
+
+<div style="max-width:700px;margin:auto;padding:20px">
+
+    <h2 style="margin-bottom:20px;">Privacy Settings</h2>
+
+    <div class="card" style="padding:20px;border-radius:12px;box-shadow:0 2px 12px rgba(0,0,0,0.05);background:#fff;margin-bottom:20px;">
+        <h3 style="margin-bottom:12px;">Change Password</h3>
+        <form method="POST" action="{{ url_for('profile_bp.change_password') }}">
+            <div style="margin-bottom:12px;">
+                <label>Current Password</label>
+                <input type="password" name="current_password" style="width:100%;padding:8px;border-radius:6px;border:1px solid #ccc;">
+            </div>
+            <div style="margin-bottom:12px;">
+                <label>New Password</label>
+                <input type="password" name="new_password" style="width:100%;padding:8px;border-radius:6px;border:1px solid #ccc;">
+            </div>
+            <div style="margin-bottom:12px;">
+                <label>Confirm New Password</label>
+                <input type="password" name="confirm_password" style="width:100%;padding:8px;border-radius:6px;border:1px solid #ccc;">
+            </div>
+            <button type="submit" style="background:#667eea;color:white;padding:10px 18px;border:none;border-radius:6px;">Update Password</button>
+        </form>
+    </div>
+
+    <div class="card" style="padding:20px;border-radius:12px;box-shadow:0 2px 12px rgba(0,0,0,0.05);background:#fff;">
+        <h3 style="margin-bottom:12px;">Privacy Preferences</h3>
+        <form method="POST" action="{{ url_for('profile_bp.update_privacy') }}">
+            <div style="margin-bottom:12px;">
+                <input type="checkbox" name="email_notifications" {% if user.email_notifications %}checked{% endif %}>
+                <label>Receive email notifications</label>
+            </div>
+            <div style="margin-bottom:12px;">
+                <input type="checkbox" name="show_profile" {% if user.show_profile %}checked{% endif %}>
+                <label>Show my profile to other users</label>
+            </div>
+            <button type="submit" style="background:#667eea;color:white;padding:10px 18px;border:none;border-radius:6px;">Save Preferences</button>
+        </form>
+    </div>
+
+</div>
+
+{% endblock %}

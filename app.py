@@ -1,4 +1,4 @@
-from flask import Flask, redirect, url_for
+from flask import Flask, redirect, url_for, session
 from database_connector import get_db_connection
 
 # Import all route blueprints
@@ -31,6 +31,39 @@ app.register_blueprint(group_bp)
 def home():
     return redirect(url_for("index_bp.index"))
 
+
+@app.context_processor
+def load_user_profile():
+    user_id = session.get('user_id')
+    
+    if user_id:
+        conn = get_db_connection()
+        cursor = conn.cursor(dictionary=True)
+        cursor.execute(
+            "SELECT id, name, role, position, profile_pic FROM users WHERE id=%s",
+            (user_id,)
+        )
+        user = cursor.fetchone()
+        cursor.close()
+        conn.close()
+
+        if user:
+            return dict(user_profile={
+                'id': user['id'],
+                'name': user['name'],
+                'role': user['role'],
+                'position': user['position'],
+                'profile_pic': user['profile_pic']
+            })
+
+    # Default values if not logged in
+    return dict(user_profile={
+        'id': None,
+        'name': 'User',
+        'role': 'User',
+        'position': '',
+        'profile_pic': None
+    })
 # -----------------------------
 # MAIN
 # -----------------------------

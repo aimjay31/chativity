@@ -4,7 +4,6 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Chativity</title>
-
 <style>
     * {margin: 0; padding: 0; box-sizing: border-box;}
     body {font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Arial, sans-serif; background: #f8f9fa;}
@@ -36,7 +35,7 @@
     .user-profile {position: absolute; bottom: 20px; width: calc(100% - 40px); padding: 12px; border-top: 1px solid #eee;}
     .sidebar.collapsed .user-profile {width: calc(100% - 20px);}
     .user-info {display: flex; align-items: center; gap: 12px;}
-    .user-avatar {width: 40px; height: 40px; background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); border-radius: 50%; display: flex; align-items: center; justify-content: center; color: white; font-weight: bold;}
+    .user-avatar {width: 40px; height: 40px; border-radius: 50%; display: flex; align-items: center; justify-content: center; color: white; font-weight: bold; font-size: 16px; background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);}
     .user-details {transition: opacity 0.3s;}
     .sidebar.collapsed .user-details {display: none;}
     .user-name {font-size: 14px; font-weight: 600; color: #1a1a1a;}
@@ -52,11 +51,13 @@
 
 <!-- Sidebar -->
 <aside class="sidebar" id="sidebar">
+    <!-- Logo -->
     <div class="logo-container" onclick="toggleSidebar()">
         <div class="logo-box">📱</div>
         <span class="logo-text">Chativity</span>
     </div>
 
+    <!-- Navigation -->
     <nav>
         <ul class="nav-menu">
             <li class="nav-item">
@@ -89,12 +90,18 @@
         </ul>
     </nav>
 
+    <!-- User Profile -->
     <a href="{{ url_for('profile_bp.profile') }}" class="user-profile">
         <div class="user-info">
-            <div class="user-avatar">{{ session.get('user_name', 'U')[0]|upper }}</div>
+            {% if user_profile.profile_pic %}
+                <img src="{{ url_for('static', filename='uploads/profile_pics/' ~ user_profile.profile_pic) }}" 
+                    alt="Avatar" class="user-avatar">
+            {% else %}
+                <div class="user-avatar">{{ user_profile.name[0]|upper }}</div>
+            {% endif %}
             <div class="user-details">
-                <div class="user-name">{{ session.get('user_name', 'User') }}</div>
-                <div class="user-role">{{ session.get('user_role', 'User') }}</div>
+                <div class="user-name">{{ user_profile.name }}</div>
+                <div class="user-role">{{ user_profile.role }}</div>
             </div>
         </div>
     </a>
