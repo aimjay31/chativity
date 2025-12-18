@@ -30,6 +30,8 @@
 
 .notification-item {
     display: flex;
+    justify-content: space-between;
+    align-items: center;
     gap: 12px;
     padding: 14px 16px;
     border-radius: 12px;
@@ -49,7 +51,9 @@
 .unread-dot {
     color: #4f6ef2;
     font-size: 14px;
-    margin-top: 3px;
+    margin-right: 8px;
+    display: inline-block;
+    vertical-align: middle;
 }
 
 .notification-content {
@@ -63,6 +67,23 @@
     margin-top: 6px;
     font-size: 12px;
     color: #6b7280;
+}
+
+.mark-btn {
+    background: #667eea;
+    color: white;
+    border: none;
+    border-radius: 12px;
+    padding: 6px 12px;
+    font-size: 12px;
+    cursor: pointer;
+    font-weight: 600;
+    transition: background 0.2s, transform 0.2s;
+}
+
+.mark-btn:hover {
+    background: #5a67d8;
+    transform: scale(1.05);
 }
 
 .empty-msg {
@@ -81,16 +102,23 @@
         <ul class="notification-list">
         {% for note in notifications %}
             <li class="notification-item {% if note.is_read == 0 %}unread{% endif %}">
-                {% if note.is_read == 0 %}
-                    <span class="unread-dot">●</span>
-                {% endif %}
 
                 <div class="notification-content">
+                    {% if note.is_read == 0 %}
+                        <span class="unread-dot">●</span>
+                    {% endif %}
                     {{ note.message }}
-                    <span class="notification-time">
-                        {{ note.created_at }}
-                    </span>
+                    <span class="notification-time">{{ note.created_at }}</span>
                 </div>
+
+                <form method="POST" action="{{ url_for('notification_bp.toggle_read', notification_id=note.id) }}">
+                    {% if note.is_read == 0 %}
+                        <button type="submit" class="mark-btn">Mark as Read</button>
+                    {% else %}
+                        <button type="submit" class="mark-btn" style="background: #9ca3af;">Mark as Unread</button>
+                    {% endif %}
+                </form>
+
             </li>
         {% else %}
             <div class="empty-msg">No notifications found.</div>
