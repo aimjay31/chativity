@@ -1,32 +1,241 @@
 {% extends "sidebar.html" %}
 {% block content %}
-<h2>Group: {{ group.name }}</h2>
-<p>Group Code: <strong>{{ group.code }}</strong></p>
 
-{% if group.created_by == session.get('user_id') %}
-<form action="{{ url_for('group_bp.delete_group', group_id=group.id) }}" method="POST" style="margin-bottom:10px;">
-    <button type="submit" onclick="return confirm('Are you sure you want to delete this group?');">Delete Group</button>
-</form>
-{% endif %}
+<style>
+.group-chat-wrapper {
+    display: grid;
+    grid-template-columns: 3fr 1fr;
+    gap: 20px;
+    height: 85vh;
+}
 
-<div style="border:1px solid #ccc;padding:10px;height:300px;overflow-y:auto">
-    {% for msg in messages %}
-    <p><strong>{{ msg.sender_name }}:</strong> {{ msg.message }}</p>
-    {% endfor %}
+/* Responsive */
+@media (max-width: 900px) {
+    .group-chat-wrapper {
+        grid-template-columns: 1fr;
+    }
+    .members-panel {
+        display: none;
+    }
+}
+
+/* CHAT PANEL */
+.chat-panel {
+    background: #ffffff;
+    border-radius: 16px;
+    display: flex;
+    flex-direction: column;
+    box-shadow: 0 4px 16px rgba(0,0,0,0.06);
+}
+
+/* Header */
+.chat-header {
+    padding: 16px 20px;
+    border-bottom: 1px solid #e5e7eb;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.chat-header h2 {
+    font-size: 18px;
+    color: #1f2937;
+}
+
+.group-code {
+    font-size: 13px;
+    color: #6b7280;
+}
+
+/* Messages */
+.chat-messages {
+    flex: 1;
+    padding: 16px;
+    overflow-y: auto;
+    background: #f9fafb;
+}
+
+.msg {
+    max-width: 70%;
+    padding: 10px 14px;
+    border-radius: 16px;
+    margin-bottom: 12px;
+    font-size: 14px;
+    line-height: 1.4;
+}
+
+.msg.me {
+    background: linear-gradient(135deg, #667eea, #764ba2);
+    color: white;
+    margin-left: auto;
+    border-bottom-right-radius: 4px;
+}
+
+.msg.other {
+    background: #e5e7eb;
+    color: #111827;
+    border-bottom-left-radius: 4px;
+}
+
+.msg .sender {
+    font-size: 12px;
+    font-weight: 600;
+    opacity: 0.8;
+    margin-bottom: 4px;
+}
+
+.msg .time {
+    font-size: 11px;
+    opacity: 0.6;
+    margin-top: 4px;
+    text-align: right;
+}
+
+/* Input */
+.chat-input {
+    display: flex;
+    gap: 10px;
+    padding: 14px;
+    border-top: 1px solid #e5e7eb;
+    background: #ffffff;
+}
+
+.chat-input input {
+    flex: 1;
+    padding: 12px;
+    border-radius: 10px;
+    border: 1px solid #d1d5db;
+    font-size: 14px;
+}
+
+.chat-input input:focus {
+    outline: none;
+    border-color: #667eea;
+}
+
+.chat-input button {
+    padding: 12px 18px;
+    background: linear-gradient(135deg, #667eea, #764ba2);
+    color: white;
+    border: none;
+    border-radius: 10px;
+    cursor: pointer;
+    font-weight: 600;
+}
+
+/* MEMBERS */
+.members-panel {
+    background: #ffffff;
+    border-radius: 16px;
+    padding: 16px;
+    box-shadow: 0 4px 16px rgba(0,0,0,0.06);
+}
+
+.members-panel h3 {
+    font-size: 16px;
+    margin-bottom: 12px;
+    color: #1f2937;
+}
+
+.members-panel ul {
+    list-style: none;
+    padding: 0;
+}
+
+.members-panel li {
+    padding: 8px 10px;
+    background: #f3f4f6;
+    border-radius: 10px;
+    margin-bottom: 8px;
+    font-size: 14px;
+}
+
+/* Buttons */
+.delete-btn {
+    background: #fee2e2;
+    color: #b91c1c;
+    border: none;
+    padding: 6px 10px;
+    border-radius: 8px;
+    cursor: pointer;
+    font-size: 13px;
+}
+
+.task-link {
+    display: block;
+    margin-top: 12px;
+    text-align: center;
+    padding: 10px;
+    background: #4f6ef2;
+    color: white;
+    text-decoration: none;
+    border-radius: 10px;
+    font-weight: 600;
+}
+</style>
+
+<div class="group-chat-wrapper">
+
+    <!-- CHAT -->
+    <div class="chat-panel">
+
+        <div class="chat-header">
+            <div>
+                <h2>{{ group.name }}</h2>
+                <div class="group-code">Group Code: <strong>{{ group.code }}</strong></div>
+            </div>
+
+            {% if group.created_by == session.get('user_id') %}
+            <form action="{{ url_for('group_bp.delete_group', group_id=group.id) }}" method="POST">
+                <button class="delete-btn"
+                        onclick="return confirm('Delete this group permanently?');">
+                    Delete
+                </button>
+            </form>
+            {% endif %}
+        </div>
+
+        <div class="chat-messages" id="chatBox">
+            {% for msg in messages %}
+                <div class="msg {% if msg.sender_id == session.get('user_id') %}me{% else %}other{% endif %}">
+                    <div class="sender">{{ msg.sender_name }}</div>
+                    {{ msg.message }}
+                    {% if msg.created_at %}
+                    <div class="time">{{ msg.created_at.strftime('%H:%M') }}</div>
+                    {% endif %}
+                </div>
+            {% endfor %}
+        </div>
+
+        <form method="POST" class="chat-input">
+            <input type="text" name="message" placeholder="Type a message..." required>
+            <button type="submit">Send</button>
+        </form>
+
+    </div>
+
+    <!-- MEMBERS -->
+    <div class="members-panel">
+        <h3>Members</h3>
+        <ul>
+            {% for m in members %}
+                <li>{{ m.name }}</li>
+            {% endfor %}
+        </ul>
+
+        <a href="{{ url_for('task_bp.new_task_group', group_id=group.id) }}" class="task-link">
+            + Add Group Task
+        </a>
+    </div>
+
 </div>
 
-<form method="POST" style="margin-top:10px">
-    <input type="text" name="message" placeholder="Type a message..." required>
-    <button type="submit">Send</button>
-</form>
-
-<h3>Members</h3>
-<ul>
-{% for m in members %}
-    <li>{{ m.name }}</li>
-{% endfor %}
-</ul>
-
-<a href="{{ url_for('task_bp.new_task_group', group_id=group.id) }}">Add Task to Group</a>
+<script>
+/* Auto-scroll to bottom */
+const chatBox = document.getElementById("chatBox");
+if (chatBox) {
+    chatBox.scrollTop = chatBox.scrollHeight;
+}
+</script>
 
 {% endblock %}

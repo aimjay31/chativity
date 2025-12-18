@@ -1,192 +1,197 @@
-<!--<!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Login</title>
-    <style>
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Login</title>
 
-        body {
-            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
-            background: #f5f5f5;
-            min-height: 100vh;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            padding: 20px;
-        }
+<style>
+body {
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Arial, sans-serif;
+    background: linear-gradient(135deg, #667eea, #764ba2);
+    min-height: 100vh;
+    margin: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
 
-        .container {
-            background: white;
-            padding: 40px;
-            border-radius: 12px;
-            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
-            width: 100%;
-            max-width: 380px;
-        }
+/* Wrapper */
+.auth-wrapper {
+    width: 100%;
+    max-width: 420px;
+    padding: 20px;
+}
 
-        h1 {
-            text-align: center;
-            color: #1a1a1a;
-            margin-bottom: 8px;
-            font-size: 28px;
-            font-weight: 600;
-        }
+/* Card */
+.form-card {
+    background: rgba(255,255,255,0.95);
+    backdrop-filter: blur(8px);
+    padding: 35px 30px;
+    border-radius: 18px;
+    box-shadow: 0 20px 40px rgba(0,0,0,0.15);
+    animation: fadeUp 0.6s ease;
+}
 
-        .subtitle {
-            text-align: center;
-            color: #666;
-            margin-bottom: 30px;
-            font-size: 14px;
-        }
+@keyframes fadeUp {
+    from { opacity: 0; transform: translateY(20px); }
+    to { opacity: 1; transform: translateY(0); }
+}
 
-        .form-group {
-            margin-bottom: 20px;
-        }
+.form-card h2 {
+    text-align: center;
+    font-size: 26px;
+    margin-bottom: 6px;
+    color: #1f2937;
+}
 
-        label {
-            display: block;
-            margin-bottom: 8px;
-            color: #333;
-            font-weight: 500;
-            font-size: 14px;
-        }
+.form-card p {
+    text-align: center;
+    font-size: 14px;
+    color: #6b7280;
+    margin-bottom: 27px;
+}
 
-        input {
-            width: 100%;
-            padding: 12px 14px;
-            border: 1px solid #ddd;
-            border-radius: 8px;
-            font-size: 14px;
-            transition: border-color 0.2s;
-        }
+/* Floating Inputs */
+.form-group {
+    position: relative;
+    margin-bottom: 22px;
+}
 
-        input:focus {
-            outline: none;
-            border-color: #667eea;
-        }
+.form-group input {
+    width: 100%;
+    padding: 14px 1px;
+    border: 1px solid #e5e7eb;
+    border-radius: 10px;
+    font-size: 14px;
+    background: none;
+    outline: none;
+    transition: 0.2s;
+}
 
-        .signin-btn {
-            width: 100%;
-            padding: 12px;
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            color: white;
-            border: none;
-            border-radius: 8px;
-            font-size: 16px;
-            font-weight: 600;
-            cursor: pointer;
-            transition: transform 0.2s, box-shadow 0.2s;
-            margin-top: 10px;
-            margin-bottom: 30px;
-        }
+.form-group label {
+    position: absolute;
+    top: 50%;
+    left: 12px;
+    color: #9ca3af;
+    font-size: 14px;
+    pointer-events: none;
+    transform: translateY(-50%);
+    transition: 0.2s;
+    background: white;
+    padding: 0 6px;
+}
 
-        .signin-btn:hover {
-            transform: scale(1.02);
-            box-shadow: 0 8px 16px rgba(102, 126, 234, 0.3);
-        }
+.form-group input:focus,
+.form-group input:not(:placeholder-shown) {
+    border-color: #667eea;
+}
 
-        .divider {
-            text-align: center;
-            color: #999;
-            font-size: 13px;
-            margin-bottom: 20px;
-        }
+.form-group input:focus + label,
+.form-group input:not(:placeholder-shown) + label {
+    top: -6px;
+    font-size: 12px;
+    color: #667eea;
+}
 
-        .google-signin {
-            width: 100%;
-            padding: 12px;
-            background: white;
-            border: 1px solid #ddd;
-            border-radius: 8px;
-            font-size: 14px;
-            font-weight: 500;
-            cursor: pointer;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            gap: 10px;
-            transition: background-color 0.2s, border-color 0.2s;
-            margin-bottom: 30px;
-        }
+/* Button */
+button {
+    width: 100%;
+    padding: 14px;
+    background: linear-gradient(135deg, #667eea, #764ba2);
+    border: none;
+    border-radius: 12px;
+    color: white;
+    font-weight: 600;
+    cursor: pointer;
+    font-size: 15px;
+    transition: transform 0.2s, box-shadow 0.2s;
+}
 
-        .google-signin:hover {
-            background: #f9f9f9;
-            border-color: #ccc;
-        }
+button:hover {
+    transform: translateY(-1px);
+    box-shadow: 0 10px 20px rgba(102,126,234,0.4);
+}
 
-        .google-icon {
-            font-size: 18px;
-        }
+/* Divider */
+.divider {
+    display: flex;
+    align-items: center;
+    text-align: center;
+    font-size: 13px;
+    color: #9ca3af;
+    margin: 22px 0;
+}
 
-        .signup-section {
-            text-align: center;
-            color: #666;
-            font-size: 14px;
-        }
+/* Google Button */
+.google-btn {
+    width: 100%;
+    padding: 12px;
+    border: 1px solid #e5e7eb;
+    background: white;
+    border-radius: 10px;
+    font-weight: 500;
+    cursor: pointer;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 10px;
+    transition: 0.2s;
+}
 
-        .signup-section a {
-            color: #667eea;
-            text-decoration: none;
-            font-weight: 600;
-            transition: color 0.2s;
-        }
+.google-btn:hover {
+    background: #f9fafb;
+}
 
-        .signup-section a:hover {
-            color: #764ba2;
-        }
-    </style>
+/* Footer */
+.footer-link {
+    display: block;
+    margin-top: 18px;
+    text-align: center;
+    font-size: 14px;
+    color: #667eea;
+    text-decoration: none;
+}
+
+.footer-link:hover {
+    text-decoration: underline;
+}
+</style>
 </head>
+
 <body>
-    
-    <div class="container">
-        
-        <h1>Welcome back</h1>
-        <p class="subtitle">Sign in to your account</p>
-        
-        <form id="loginForm">
+
+<div class="auth-wrapper">
+    <div class="form-card">
+        <h2>Welcome Back</h2>
+        <p>Login to continue to Chactivity</p>
+
+        <form method="POST" action="{{ url_for('auth_bp.login') }}">
+
             <div class="form-group">
-                <label for="email">Email</label>
-                <input type="email" id="email" required>
+                <input type="email" name="email" required placeholder=" ">
+                <label>Email Address</label>
             </div>
-            
+
             <div class="form-group">
-                <label for="password">Password</label>
-                <input type="password" id="password" required>
+                <input type="password" name="password" required placeholder=" ">
+                <label>Password</label>
             </div>
-            
-            <button type="button" class="signin-btn">Log in</button>
+
+            <button type="submit">Log In</button>
         </form>
-        
-        <p class="divider">Or continue with</p>
-        
-        <button class="google-signin">
-            <span class="google-icon">G</span>
-            Sign in with Google
+
+        <div class="divider">or continue with</div>
+
+        <button class="google-btn">
+            <span>🔵</span> Sign in with Google
         </button>
-        
-        <p class="signup-section">Don't have an account? <a href="#">Sign up</a></p>
-        
+
+        <a href="{{ url_for('auth_bp.register') }}" class="footer-link">
+            Don’t have an account? Sign up
+        </a>
     </div>
-    
-    <script>
-        document.querySelector('.signin-btn').addEventListener('click', function() {
-            window.location.href = "/dashboard"; 
-        });
-    </script>
-    
+</div>
+
 </body>
 </html>
--->
-<form method="POST">
-    <input type="email" name="email" placeholder="Email" required><br>
-    <input type="password" name="password" placeholder="Password" required><br>
-    <button type="submit">Login</button>
-</form>
-<a href="{{ url_for('auth_bp.register') }}">Don't have an account? Register</a>
-

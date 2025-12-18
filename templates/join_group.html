@@ -1,5 +1,119 @@
-<h2>Join Group by Code</h2>
-<form method="POST">
-    <input type="text" name="code" placeholder="Enter group code" required>
-    <button type="submit">Join Group</button>
-</form>
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Join Group</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <style>
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Arial, sans-serif;
+            background: #f5f7fb;
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .join-group-wrapper {
+            width: 100%;
+            padding: 20px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .join-group-card {
+            background: #ffffff;
+            width: 100%;
+            max-width: 380px;
+            padding: 32px;
+            border-radius: 16px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.08);
+            text-align: center;
+        }
+
+        .join-group-card h2 {
+            font-size: 26px;
+            color: #1f2937;
+            margin-bottom: 6px;
+        }
+
+        .subtitle {
+            font-size: 14px;
+            color: #6b7280;
+            margin-bottom: 24px;
+        }
+
+        .join-group-card input {
+            width: 100%;
+            padding: 14px;
+            border-radius: 12px;
+            border: 1px solid #e5e7eb;
+            font-size: 15px;
+            margin-bottom: 18px;
+            transition: border-color 0.2s;
+        }
+
+        .join-group-card input:focus {
+            outline: none;
+            border-color: #667eea;
+        }
+
+        .join-group-card button {
+            width: 100%;
+            padding: 14px;
+            border: none;
+            border-radius: 12px;
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            color: white;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: 0.2s;
+        }
+
+        .join-group-card button:hover {
+            transform: scale(1.02);
+            box-shadow: 0 8px 20px rgba(102, 126, 234, 0.35);
+        }
+
+        .cancel-link {
+            display: inline-block;
+            margin-top: 20px;
+            font-size: 14px;
+            color: #667eea;
+            text-decoration: none;
+        }
+
+        .cancel-link:hover {
+            text-decoration: underline;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="join-group-wrapper">
+        <div class="join-group-card">
+            <h2>Join Group</h2>
+            <p class="subtitle">Enter the group code shared with you</p>
+
+            <form method="POST">
+                <input type="text" name="code" placeholder="Group Code" required>
+                <button type="submit">Join Group</button>
+            </form>
+
+            <a href="{{ url_for('group_bp.groups_list') }}" class="cancel-link">
+                Cancel
+            </a>
+        </div>
+    </div>
+
+</body>
+</html>

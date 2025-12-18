@@ -1,34 +1,201 @@
 {% extends "sidebar.html" %}
 {% block content %}
-<div style="max-width:600px;margin:auto;background:#fff;padding:20px;border-radius:12px;box-shadow:0 2px 12px rgba(0,0,0,0.05)">
-    <h2>{{ task.title }}</h2>
-    <p><strong>Description:</strong> {{ task.description or '-' }}</p>
-    <p><strong>Assigned to:</strong> {% if task.assigned_to == session.get('user_id') %}You{% else %}{{ task.assigned_name }}{% endif %}</p>
-    <p><strong>Assigned by:</strong> {% if task.created_by == session.get('user_id') %}You{% else %}{{ task.created_name }}{% endif %}</p>
-    <p><strong>Group:</strong> {{ task.group_name or 'Personal' }}</p>
-    <p><strong>Priority:</strong> {{ task.priority|capitalize }}</p>
-    <p><strong>Status:</strong> {{ task.status|capitalize }} {% if task.is_approved %}(Approved){% endif %}</p>
-    <p><strong>Created At:</strong> {{ task.created_at }}</p>
-    <p><strong>Deadline:</strong> {{ task.due_date or 'No deadline' }}</p>
-    {% if task.work_link %}
-    <p><strong>Work Link:</strong> <a href="{{ task.work_link }}" target="_blank">{{ task.work_link }}</a></p>
-    {% endif %}
 
-    <div style="margin-top:20px;">
-        {% if task.assigned_to == session.get('user_id') %}
-            <form action="{{ url_for('task_bp.toggle_task', task_id=task.id) }}" method="POST" style="display:inline;">
-                <button type="submit" style="background:none;border:none;color:{{ 'green' if task.status=='completed' else 'blue' }};cursor:pointer;">
-                    {% if task.status=='completed' %}✔ Mark Undone{% else %}✔ Mark Done{% endif %}
-                </button>
-            </form>
-        {% endif %}
+<style>
+.dashboard-wrapper {
+    max-width: 760px;
+    margin: 50px auto;
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Arial, sans-serif;
+}
 
-        {% if task.created_by == session.get('user_id') and task.status=='completed' and not task.is_approved %}
-            <a href="{{ url_for('task_bp.approve_task', task_id=task.id) }}" style="color:orange;">✅ Approve Task</a>
-        {% elif task.is_approved %}
-            <span style="color:green;">✅ Approved</span>
-        {% endif %}
+.task-card {
+    background: #ffffff;
+    padding: 32px;
+    border-radius: 18px;
+    box-shadow: 0 6px 20px rgba(16,24,40,0.08);
+}
+
+/* Header */
+.task-header {
+    margin-bottom: 24px;
+}
+
+.task-header h2 {
+    font-size: 26px;
+    color: #18202c;
+    margin-bottom: 6px;
+}
+
+.task-sub {
+    font-size: 14px;
+    color: #6b7280;
+}
+
+/* Info rows */
+.task-info {
+    display: grid;
+    grid-template-columns: 1fr 2fr;
+    row-gap: 14px;
+    column-gap: 16px;
+    margin-top: 24px;
+    font-size: 14px;
+}
+
+.task-info .label {
+    color: #6b7280;
+    font-weight: 500;
+}
+
+.task-info .value {
+    color: #111827;
+}
+
+/* Badges */
+.badge {
+    display: inline-block;
+    padding: 4px 12px;
+    border-radius: 999px;
+    font-size: 12px;
+    font-weight: 600;
+}
+
+.priority.high { background: #fee2e2; color: #b91c1c; }
+.priority.medium { background: #fef3c7; color: #b45309; }
+.priority.low { background: #dcfce7; color: #166534; }
+
+.status.completed { background: #dcfce7; color: #166534; }
+.status.pending { background: #e0e7ff; color: #3730a3; }
+
+.approved-badge {
+    background: #ecfdf5;
+    color: #047857;
+}
+
+/* Actions */
+.task-actions {
+    margin-top: 32px;
+    display: flex;
+    gap: 14px;
+    flex-wrap: wrap;
+}
+
+.btn {
+    padding: 10px 16px;
+    border-radius: 10px;
+    border: none;
+    cursor: pointer;
+    font-weight: 600;
+    font-size: 14px;
+    transition: 0.2s;
+}
+
+.btn-primary {
+    background: linear-gradient(135deg, #667eea, #764ba2);
+    color: white;
+}
+
+.btn-primary:hover {
+    transform: scale(1.03);
+    box-shadow: 0 8px 18px rgba(102,126,234,0.3);
+}
+
+.btn-secondary {
+    background: #f3f4f6;
+    color: #111827;
+}
+
+.btn-secondary:hover {
+    background: #e5e7eb;
+}
+
+.btn-approve {
+    background: #fef3c7;
+    color: #b45309;
+}
+
+.btn-approve:hover {
+    background: #fde68a;
+}
+
+.link {
+    color: #4f6ef2;
+    text-decoration: none;
+    font-weight: 500;
+}
+</style>
+
+<div class="dashboard-wrapper">
+    <div class="task-card">
+
+        <div class="task-header">
+            <h2>{{ task.title }}</h2>
+            <div class="task-sub">
+                {{ task.group_name or 'Personal Task' }}
+            </div>
+        </div>
+
+        <div class="task-info">
+            <div class="label">Description</div>
+            <div class="value">{{ task.description or '-' }}</div>
+
+            <div class="label">Assigned to</div>
+            <div class="value">
+                {% if task.assigned_to == session.get('user_id') %}You{% else %}{{ task.assigned_name }}{% endif %}
+            </div>
+
+            <div class="label">Assigned by</div>
+            <div class="value">
+                {% if task.created_by == session.get('user_id') %}You{% else %}{{ task.created_name }}{% endif %}
+            </div>
+
+            <div class="label">Priority</div>
+            <div class="value">
+                <span class="badge priority {{ task.priority }}">{{ task.priority|capitalize }}</span>
+            </div>
+
+            <div class="label">Status</div>
+            <div class="value">
+                <span class="badge status {{ task.status }}">{{ task.status|capitalize }}</span>
+                {% if task.is_approved %}
+                    <span class="badge approved-badge">Approved</span>
+                {% endif %}
+            </div>
+
+            <div class="label">Created At</div>
+            <div class="value">{{ task.created_at }}</div>
+
+            <div class="label">Deadline</div>
+            <div class="value">{{ task.due_date or 'No deadline' }}</div>
+
+            {% if task.work_link %}
+            <div class="label">Work Link</div>
+            <div class="value">
+                <a href="{{ task.work_link }}" target="_blank" class="link">{{ task.work_link }}</a>
+            </div>
+            {% endif %}
+        </div>
+
+        <div class="task-actions">
+            {% if task.assigned_to == session.get('user_id') %}
+                <form action="{{ url_for('task_bp.toggle_task', task_id=task.id) }}" method="POST">
+                    {% if task.status=='completed' %}
+                        <button type="submit" class="btn btn-secondary">✔ Mark Undone</button>
+                    {% else %}
+                        <button type="submit" class="btn btn-primary">✔ Mark Done</button>
+                    {% endif %}
+                </form>
+            {% endif %}
+
+            {% if task.created_by == session.get('user_id') and task.status=='completed' and not task.is_approved %}
+                <a href="{{ url_for('task_bp.approve_task', task_id=task.id) }}" class="btn btn-approve">
+                    ✅ Approve Task
+                </a>
+            {% elif task.is_approved %}
+                <span class="badge approved-badge">✅ Approved</span>
+            {% endif %}
+        </div>
+
     </div>
 </div>
-{% endblock %}
 
+{% endblock %}

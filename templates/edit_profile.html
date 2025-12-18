@@ -1,14 +1,102 @@
 {% extends "sidebar.html" %}
 {% block content %}
-<div style="max-width:600px;margin:auto;background:#fff;padding:20px;border-radius:12px;box-shadow:0 2px 12px rgba(0,0,0,0.05)">
+
+<style>
+.profile-card {
+    max-width: 600px;
+    margin: 40px auto;
+    background: #ffffff;
+    padding: 28px;
+    border-radius: 16px;
+    box-shadow: 0 4px 16px rgba(0,0,0,0.06);
+}
+
+.profile-card h2 {
+    font-size: 24px;
+    margin-bottom: 20px;
+    color: #1f2937;
+}
+
+.profile-card label {
+    display: block;
+    margin-top: 16px;
+    font-weight: 500;
+    font-size: 14px;
+    color: #374151;
+}
+
+.profile-card input,
+.profile-card textarea {
+    width: 100%;
+    margin-top: 6px;
+    padding: 10px 12px;
+    border-radius: 8px;
+    border: 1px solid #e5e7eb;
+    font-size: 14px;
+}
+
+.profile-card textarea {
+    resize: vertical;
+    min-height: 80px;
+}
+
+.profile-card input:focus,
+.profile-card textarea:focus {
+    outline: none;
+    border-color: #667eea;
+}
+
+.profile-pic-preview {
+    margin-top: 10px;
+}
+
+.profile-pic-preview img {
+    width: 80px;
+    height: 80px;
+    border-radius: 50%;
+    object-fit: cover;
+    border: 2px solid #e5e7eb;
+}
+
+.save-btn {
+    margin-top: 24px;
+    width: 100%;
+    padding: 12px;
+    background: linear-gradient(135deg, #667eea, #764ba2);
+    color: #fff;
+    border: none;
+    border-radius: 10px;
+    font-size: 15px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: 0.2s;
+}
+
+.save-btn:hover {
+    transform: scale(1.02);
+    box-shadow: 0 8px 20px rgba(102, 126, 234, 0.3);
+}
+
+.success-msg {
+    background: #ecfdf5;
+    color: #047857;
+    padding: 10px 14px;
+    border-radius: 8px;
+    font-size: 14px;
+    margin-bottom: 16px;
+}
+</style>
+
+<div class="profile-card">
+
     <h2>Edit Profile</h2>
 
     {% if message %}
-    <p style="color:green;">{{ message }}</p>
+        <div class="success-msg">{{ message }}</div>
     {% endif %}
 
     <form action="{{ url_for('profile_bp.edit_profile') }}" method="POST" enctype="multipart/form-data">
-        <!-- Existing inputs -->
+
         <label>Full Name</label>
         <input type="text" name="name" value="{{ user.name }}" required>
 
@@ -27,17 +115,26 @@
         <label>Year (if school)</label>
         <input type="text" name="year" value="{{ user.year or '' }}">
 
-        <!-- Profile Picture -->
         <label>Profile Picture</label>
-        {% if user.profile_pic %}
-            <div>
-                <img src="{{ url_for('static', filename='uploads/profile_pics/' ~ user.profile_pic) }}" alt="Profile Picture" style="width:80px;height:80px;border-radius:50%;">
-            </div>
-        {% endif %}
-        <input type="file" name="profile_pic" accept="image/*">
 
-        <button type="submit">Save Changes</button>
+        <div class="profile-pic-preview">
+            <img id="previewImg"
+                 src="{% if user.profile_pic %}{{ url_for('static', filename='uploads/profile_pics/' ~ user.profile_pic) }}{% else %}https://via.placeholder.com/80{% endif %}"
+                 alt="Profile Picture">
+        </div>
+
+        <input type="file" name="profile_pic" accept="image/*" onchange="previewImage(event)">
+
+        <button type="submit" class="save-btn">Save Changes</button>
     </form>
 
 </div>
+
+<script>
+function previewImage(event) {
+    const img = document.getElementById('previewImg');
+    img.src = URL.createObjectURL(event.target.files[0]);
+}
+</script>
+
 {% endblock %}
